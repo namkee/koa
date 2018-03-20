@@ -25,16 +25,14 @@ app.use(async ctx => {
 })
 ```
 
-You don't have to use asynchronous functions - you just have to pass a function that returns a promise. 
-A regular function that returns a promise works too!
+반드시 비동기 함수를 사용할 필요는 없습니다. Promise 을 반환하는 함수를 전달하면됩니다. Promise을 반환하는 정규 함수도 작동합니다!
 
-The signature has changed to pass `Context` via an explicit parameter, `ctx` above, instead of via
-`this`.  The context passing change makes Koa more compatible with es6 arrow functions, which capture `this`.
+함수 형상이 `this` 대신 위의 코드 처럼 매개 변수 `ctx` 를 통해 `Context`를 전달하도록 변경되었습니다. 
+Context 의 전달 방법의 변경은 Koa가 `this`를 확보하고 있는 es6 arrow 함수와 더 호환되도록 만듭니다.
 
 ## Using v1.x Middleware in v2.x
-
-Koa v2.x will try to convert legacy signature, generator middleware on `app.use`, using [koa-convert](https://github.com/koajs/convert).
-It is however recommended that you choose to migrate all v1.x middleware as soon as possible.
+Koa v2.x는 [koa-convert](https://github.com/koajs/convert) 를 사용하여 app.use에서 기존의 함수 형상, generator 미들웨어를 변환을 시도합니다. (지원합니다.)
+그러나 가능한 한 빨리 모든 v1.x 미들웨어를 마이그레이션하도록 선택하는 것이 좋습니다.
 
 ```js
 // Koa will convert
@@ -91,22 +89,23 @@ You should start refactoring your code now to ease migrating to Koa v2:
   - Convert `yield []` into `yield Promise.all([])`
   - Convert `yield {}` into `yield Bluebird.props({})`
 
-You could also refactor your logic outside of Koa middleware functions. Create functions like 
-`function* someLogic(ctx) {}` and call it in your middleware as 
-`const result = yield someLogic(this)`.
-Not using `this` will help migrations to the new middleware signature, which does not use `this`.
+ 
+
+Koa 미들웨어 함수의 외부에서 로직을 리팩터링 할 수도 있습니다. 
+`function* someLogic(ctx) {}`와 같은 함수를 생성하고 미들웨어에서 `const result = yield someLogic(this)` 와 같이 호출합니다. 
+`this` 를 사용하지 않은 미들웨어라면, 새로운 미들웨어 형상으로 마이그레이션하는 데 도움이됩니다.
+
 
 ## Application object constructor requires new 
 
-In v1.x, the Application constructor function could be called directly, without `new` to 
-instantiate an instance of an application.  For example:
+v1.x에서는 애플리케이션의 인스턴스를 인스턴스화 하는데, 애플리케이션 생성자 함수를 `new` 이 직접 호출 할 수있었습니다.
+
 
 ```js
 var koa = require('koa');
 var app = module.exports = koa();
 ```
-
-v2.x uses es6 classes which require the `new` keyword to be used.
+v2.x는 'new` 키워드가 반드시 필요한 es6 클래스를 사용합니다.
 
 ```js
 var koa = require('koa');

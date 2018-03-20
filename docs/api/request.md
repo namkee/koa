@@ -1,8 +1,6 @@
 # Request
 
-  A Koa `Request` object is an abstraction on top of node's vanilla request object,
-  providing additional functionality that is useful for every day HTTP server
-  development.
+  Koa의 `Request` 객체는 nodejs의 request 객체 위에 추상화되어 있으며, HTTP 서버 개발에 유용한 추가 기능들을 제공합니다.
 
 ## API
 
@@ -28,8 +26,7 @@
 
 ### request.method=
 
-  Set request method, useful for implementing middleware
-  such as `methodOverride()`.
+  Set request method, useful for implementing middleware such as `methodOverride()`.
 
 ### request.length
 

@@ -2,8 +2,8 @@
 
 ## Try-Catch
 
-  Using async functions means that you can try-catch `next`.
-  This example adds a `.status` to all errors:
+  async 함수를 사용면, `next` 를 try-catch 할 수 있습니다. 
+  아래 예제는 모든 err 객체에 `.status` 를 추가합니다.
 
   ```js
   app.use(async (ctx, next) => {
@@ -18,21 +18,16 @@
 
 ### Default Error Handler
 
-  The default error handler is essentially a try-catch at
-  the very beginning of the middleware chain. To use a
-  different error handler, simply put another try-catch at
-  the beginning of the middleware chain, and handle the error
-  there. However, the default error handler is good enough for
-  most use cases. It will use a status code of `err.status`,
-  or by default 500. If `err.expose` is true, then `err.message`
-  will be the reply. Otherwise, a message generated from the
-  error code will be used (e.g. for the code 500 the message
-  "Internal Server Error" will be used). All headers will be
-  cleared from the request, but any headers in `err.headers`
-  will then be set. You can use a try-catch, as specified
-  above, to add a header to this list.
+  기본 에러 핸들러는 미들웨어체인의 맨처음 미들웨어의 try-catch 입니다. 
+  다른 에러 핸들러를 사용하려면 미들웨어체인 시작 부분에 또 다른 try-catch 를 코딩해서 에러를 처리하십시오. 
+  그러나 대부분의 사용 사례에서는 기본 오류 처리기로 충분합니다. 
+  `err.status` 에 지정된 상태 코드를 사용하며 지정되지 않았다면, 기본값 500을 사용합니다. 
+  `err.expose` 의 값이 true이면 `err.message`의 값이 응답이 됩니다. 
+  그렇지 않으면 에러 코드에서 생성 된 메시지가 사용됩니다(예 : 코드 500의 경우 "Internal Server Error" 메시지가 사용됨). 
+  모든 request 의 모든 헤더가 지워지지만, `err.headers` 로 지정한 헤더는 설정 됩니다. 
+  위에서 이야기한 대로 try-catch 를 사용하여 이 목록에 헤더를 추가 할 수 있습니다.
 
-  Here is an example of creating your own error handler:
+  에러 핸들러를 구현하는 예제는 다음과 같습니다.
 
 ```js
 app.use(async (ctx, next) => {
@@ -50,11 +45,9 @@ app.use(async (ctx, next) => {
 
 ## The Error Event
 
-  Error event listeners can be specified with `app.on('error')`.
-  If no error listener is specified, a default error listener
-  is used. Error listener receive all errors that make their
-  way back through the middleware chain, if an error is caught
-  and not thrown again, it will not be passed to the error
-  listener. If no error event listener is specified, then
-  `app.onerror` will be used, which simply log the error if
-  `error.expose` is true and `app.silent` is false.
+  에러 이벤트 리스너는 `app.on('error')` 와 같이 코드를 추가해주면 사용 할 수 있습니다. 
+  에러 리스너를 지정하지 않으면 기본 에러 리스터가 사용됩니다. 
+  에러 리스너는 미들웨어 체인을 통해 되돌아 오는 모든 오류를 수신합니다. 
+  에러를 catch 하여 다시 throw 하지 않는다면 에러 리스너로 전달되지 않습니다. 
+  에러 이벤트 리스너가 지정되지 않은 경우 단순하게 에러를 로깅하기 위한 목적으로 `app.onerror` 가 사용됩니다. 
+  에러 로깅은 `error.expose`가 true 이고 `app.silent`가 false 인 경우에만 동작합니다.

@@ -6,8 +6,7 @@
 
 See also [debugging Koa](guide.md#debugging-koa).
 
-If you encounter a problem and later learn how to fix it, and think others might also encounter that problem, please 
-consider contributing to this documentation.
+문제가 발생하여 나중에 문제를 해결하는 방법을 제공합니다, 다른 사람들도 문제를 겪을 수 있다고 생각되면 이 문서에 기여하는 것을 고려해보십시오.
 
 ## Whenever I try to access my route, it sends back a 404
 

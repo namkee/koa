@@ -1,8 +1,8 @@
 # Installation
 
-  Koa requires __node v7.6.0__ or higher for ES2015 and async function support.
+  Koa는 ES2015 및 async 함수 지원을 위해 __node v7.6.0__ 이상이 필요합니다.
 
-  You can quickly install a supported version of node with your favorite version manager:
+  원하는 버전 관리자를 사용하여 지원되는 노드 버전을 신속하게 설치할 수 있습니다.
 
 ```bash
 $ nvm install 7
@@ -12,7 +12,7 @@ $ node my-koa-app.js
 
 ## Async Functions with Babel
 
-To use `async` functions in Koa in versions of node < 7.6, we recommend using [babel's require hook](http://babeljs.io/docs/usage/babel-register/).
+노드 <7.6의 버전에서 Koa에서 `async` 함수를 사용하려면 babel의 [babel's require hook](http://babeljs.io/docs/usage/babel-register/) 을 사용하는 것이 좋습니다.
 
 ```js
 require('babel-register');
@@ -20,33 +20,29 @@ require('babel-register');
 const app = require('./app');
 ```
 
-To parse and transpile async functions,
-you should at a minimum have the [transform-async-to-generator](http://babeljs.io/docs/plugins/transform-async-to-generator/)
-or [transform-async-to-module-method](http://babeljs.io/docs/plugins/transform-async-to-module-method/) plugins.
-For example, in your `.babelrc` file, you should have:
+async 함수를 구문 분석하고 변환하려면 최소한 [transform-async-to-generator](http://babeljs.io/docs/plugins/transform-async-to-generator/) 또는 
+[transform-async-to-module-method](http://babeljs.io/docs/plugins/transform-async-to-module-method/) 플러그인이 있어야합니다. 
+예를 들어, `.babelrc` 파일에 다음이 있어야합니다.
 
 ```json
 {
   "plugins": ["transform-async-to-generator"]
 }
 ```
-
-You can also use the [env preset](http://babeljs.io/docs/plugins/preset-env/) with a target option `"node": "current"` instead.
+[env preset](http://babeljs.io/docs/plugins/preset-env/) 을 대상 옵션 `"node": "current"`  로 대신 사용할 수도 있습니다.
 
 # Application
 
-  A Koa application is an object containing an array of middleware functions
-  which are composed and executed in a stack-like manner upon request. Koa is similar to many
-  other middleware systems that you may have encountered such as Ruby's Rack, Connect, and so on -
-  however a key design decision was made to provide high level "sugar" at the otherwise low-level
-  middleware layer. This improves interoperability, robustness, and makes writing middleware much
-  more enjoyable.
+  Koa 애플리케이션은 미들웨어 함수들의 배열을 가진 객체입니다. 각 미들웨어 함수는 Requset 당 스택 방식으로 구성되고 실행됩니다.
+  
+  Koa는 Ruby의 Rack, Connect 등과 같은 다른 많은 미들웨어 시스템과 유사하지만,
+  저수준의 미들웨어 계층에서 에서 높은 수준의 "슈가"를 제공하기위한 것이 핵심 설계 입니다.
+  이것은 상호 운용성, 견고성을 향상시키고 미들웨어 작성을 훨씬 즐겁게 만듭니다.
 
-  This includes methods for common tasks like content-negotiation, cache freshness, proxy support, and redirection
-  among others. Despite supplying a reasonably large number of helpful methods Koa maintains a small footprint, as
-  no middleware are bundled.
-
-  The obligatory hello world application:
+  여기에는 콘텐츠 협상, 캐시 최신성, 프록시 지원 및 리디렉션과 같은 일반적인 작업을위한 방법이 포함됩니다. 
+  Koa는 합리적으로 많은 수의 유용한 메소드를 제공 함에도 불구하고, 미들웨어가 기본 제공되지 않으므로 작은 규모를 유지합니다.
+  
+  Hello World 애플리케이션은 다음과 같습니다.
 
 ```js
 const Koa = require('koa');
@@ -61,18 +57,16 @@ app.listen(3000);
 
 ## Cascading
 
-  Koa middleware cascade in a more traditional way as you may be used to with similar tools -
-  this was previously difficult to make user friendly with node's use of callbacks.
-  However with async functions we can achieve "true" middleware. Contrasting Connect's implementation which
-  simply passes control through series of functions until one returns, Koa invoke "downstream", then
-  control flows back "upstream".
+  코아 미들웨어는 비슷한 도구를 사용했던 방식처럼 전통적인 방식으로 계단식으로 연결됩니다. 
+  이전에는 노드의 콜백 방식의 사용때문에 사용자 친화적인 방법을 사용하기가 어려웠습니다. 
+  그러나 비동기 함수를 사용하면 "진정한" 미들웨어를 구현할 수 있습니다. 
+  하나의 함수가 반환 될 때까지 일련의 함수를 통해 제어를 전달하는 Connect의 구현과 대조적으로 
+  Koa는 "downstream"을 호출 한 다음 흐름을 "업스트림"으로 되돌립니다.
 
-  The following example responds with "Hello World", however first the request flows through
-  the `x-response-time` and `logging` middleware to mark when the request started, then continue
-  to yield control through the response middleware. When a middleware invokes `next()`
-  the function suspends and passes control to the next middleware defined. After there are no more
-  middleware to execute downstream, the stack will unwind and each middleware is resumed to perform
-  its upstream behaviour.
+  다음 예는 "Hello World"로 응답하지만 요청이 시작되면 `x-response-time` 및 `logging` 미들웨어를 통해 먼저 요청이 전달 된 다음 응답 미들웨어를 통해 제어가 계속됩니다. 
+  미들웨어가 `next()`를 호출하면 함수는 일시 중단하고 정의 된 다음 미들웨어로 제어를 전달합니다. 
+  다운 스트림을 실행할 더 이상의 미들웨어가 없으면 스택이 풀리고 각 미들웨어가 재개되어 업스트림 동작을 수행합니다.
+
 
 ```js
 const Koa = require('koa');
@@ -107,21 +101,21 @@ app.listen(3000);
 
 ## Settings
 
-  Application settings are properties on the `app` instance, currently
-  the following are supported:
+  애플리케이션 세팅은 `app` 인스턴스의 속성값입니다. 현재 다음과 같이 제공됩니다.
 
-  - `app.env` defaulting to the __NODE_ENV__ or "development"
-  - `app.proxy` when true proxy header fields will be trusted
+  - `app.env` __NODE_ENV__ 에 값을 설정하며 기본값은 "development"
+  - `app.proxy` true 로 설정되면 proxy header 필드를 신뢰하여 사용하게됩니다. 
   - `app.subdomainOffset` offset of `.subdomains` to ignore [2]
 
 ## app.listen(...)
 
-  A Koa application is not a 1-to-1 representation of an HTTP server.
-  One or more Koa applications may be mounted together to form larger
-  applications with a single HTTP server.
+  Koa 응용 프로그램은 HTTP 서버의 1 대 1 표현이 아닙니다.
+  하나의 HTTP 서버에 하나 이상의 Koa 응용 프로그램을 함께 탑재하여 더 큰 응용 프로그램을 형성 할 수 있습니다.
 
-  Create and return an HTTP server, passing the given arguments to
-  `Server#listen()`. These arguments are documented on [nodejs.org](http://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback). The following is a useless Koa application bound to port `3000`:
+  `Server#listen()` 에 주어진 인자를 전달하여 HTTP 서버를 생성하고 반환합니다. 
+  이 인자는 [nodejs.org](http://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback) 문서에 정리되어 있습니다.
+
+  다음 코드는 `3000` 포트로 열려있는 아무것도 하지않는 Koa 애플리케이션 입니다.
 
 ```js
 const Koa = require('koa');
@@ -129,7 +123,7 @@ const app = new Koa();
 app.listen(3000);
 ```
 
-  The `app.listen(...)` method is simply sugar for the following:
+  `app.listen(...)` 메소드는 아래 코드를 간략하게 사용하게 해주는 좋은.. 슈가..
 
 ```js
 const http = require('http');
@@ -138,8 +132,7 @@ const app = new Koa();
 http.createServer(app.callback()).listen(3000);
 ```
 
-  This means you can spin up the same application as both HTTP and HTTPS
-  or on multiple addresses:
+  즉, HTTP 및 HTTPS 또는 여러 주소에서 동일한 애플리케이션을 시작할 수 있습니다.
 
 ```js
 const http = require('http');
@@ -152,31 +145,25 @@ https.createServer(app.callback()).listen(3001);
 
 ## app.callback()
 
-  Return a callback function suitable for the `http.createServer()`
-  method to handle a request.
-  You may also use this callback function to mount your Koa app in a
-  Connect/Express app.
+  `http.createServer()` 메서드가 요청을 처리하기 위해 적합한 콜백 함수를 반환합니다. 
+  이 콜백 함수를 사용하여 Connect / Express애플리케이션에 탑재해서 Koa 애플리케이션을 사용하게 할 수도 있습니다. 
 
 ## app.use(function)
-
-  Add the given middleware function to this application. See [Middleware](https://github.com/koajs/koa/wiki#middleware) for
-  more information.
+  이 미들웨어 함수를 애플리케이션에 추가하십시오. 자세한 정보는 [Middleware](https://github.com/koajs/koa/wiki#middleware) 를 참조하십시오.
 
 ## app.keys=
 
- Set signed cookie keys.
+  Signed 쿠키 의 키를 세팅합니다. 
 
- These are passed to [KeyGrip](https://github.com/jed/keygrip),
- however you may also pass your own `KeyGrip` instance. For
- example the following are acceptable:
+  이 값은 [KeyGrip](https://github.com/jed/keygrip) 에 전달됩니다. 
+  `KeyGrip` 인스턴스를 별도로 만들어 전달 할 수도 있습니다. 예를들어 다음의 코드가 가능합니다. 
 
 ```js
 app.keys = ['im a newer secret', 'i like turtle'];
 app.keys = new KeyGrip(['im a newer secret', 'i like turtle'], 'sha256');
 ```
 
-  These keys may be rotated and are used when signing cookies
-  with the `{ signed: true }` option:
+  이 키들은 `{ signed: true }` 옵션 이라면, 쿠키들을 서명처리 할때 순차적으로 사용됩니다. 
 
 ```js
 ctx.cookies.set('name', 'tobi', { signed: true });
@@ -184,13 +171,11 @@ ctx.cookies.set('name', 'tobi', { signed: true });
 
 ## app.context
 
-  `app.context` is the prototype from which `ctx` is created.
-  You may add additional properties to `ctx` by editing `app.context`.
-  This is useful for adding properties or methods to `ctx` to be used across your entire app,
-  which may be more performant (no middleware) and/or easier (fewer `require()`s)
-  at the expense of relying more on `ctx`, which could be considered an anti-pattern.
+  `app.context` 는 `ctx` 가 생성되는 prototype 타입입니다. `app.context` 를 수정해서 `ctx` 에 추가 속성을 추가 할 수 있습니다. 
+  이 방법이 전체 앱에서 사용할 속성 또는 메서드를 추가하는 방법으로 유용한 방법입니다.
+  `ctx`에 좀더 의존하는 것은 안티패턴 이긴 하지만, 성능면에서 더 낫고(미들웨어를 사용하지 않으므로), 비용면에서 더 편리합니다(require()` 코드 사용 빈도가 적으므로).
 
-  For example, to add a reference to your database from `ctx`:
+  예를 들어 `ctx` 에서 db에 대한 참조를 추가하는 방법은 다음과 같습니다. 
 
 ```js
 app.context.db = db();
@@ -201,30 +186,25 @@ app.use(async ctx => {
 ```
 
 Note:
-
-- Many properties on `ctx` are defined using getters, setters, and `Object.defineProperty()`. You can only edit these properties (not recommended) by using `Object.defineProperty()` on `app.context`. See https://github.com/koajs/koa/issues/652.
-- Mounted apps currently use its parent's `ctx` and settings. Thus, mounted apps are really just groups of middleware.
+- `ctx` 의 많은 속성은 getters, setters 및 `Object.defineProperty()` 를 사용하여 정의할 수 있습니다. `app.context` 에서 `Object.defineProperty()` 를 사용해야만 이러한 속성 편집 할 수 있습니다.(권장되지 않음) See . https://github.com/koajs/koa/issues/652.
+- 마운트 된 앱은 현재 부모의 `ctx` 및 설정을 사용합니다. 따라서 마운트 된 앱들은 그저 미들웨어 그룹들 이라고 할수 있습니다.
 
 ## Error Handling
-
-  By default outputs all errors to stderr unless `app.silent` is `true`.
-  The default error handler also won't output errors when `err.status` is `404` or `err.expose` is `true`.
-  To perform custom error-handling logic such as centralized logging you can add an "error" event listener:
+  기본적으로 `app.silent` 값이 `true`가 아닌 경우 모든 오류를 stderr로 출력합니다. 
+  `err.status`가 `404`이거나 `err.expose`가 `true` 일 때 기본 에러 핸들러는 오류를 출력하지 않습니다. 
+  중앙 집중식 로깅과 같은 에러 핸들링 커스터마이징 로직을 수행하려면 "error" event listener 를 추가 할 수 있습니다.
 
 ```js
 app.on('error', err => {
   log.error('server error', err)
 });
 ```
-
-  If an error is in the req/res cycle and it is _not_ possible to respond to the client, the `Context` instance is also passed:
+  req/res 처리과정에서 오류가 발생 했고, 클라이언트에 전달 할 수 없으면 `Context` 인스턴스도 그냥 통과 합니다. 
 
 ```js
 app.on('error', (err, ctx) => {
   log.error('server error', err, ctx)
 });
 ```
-
-  When an error occurs _and_ it is still possible to respond to the client, aka no data has been written to the socket, Koa will respond
-  appropriately with a 500 "Internal Server Error". In either case
-  an app-level "error" is emitted for logging purposes.
+  오류가 발생하고 여전히 클라이언트에 응답 할 수 있으면 소켓에 데이터가 기록되지 않은 상태에서 Koa는 500 "Internal Server Error"로 적절하게 응답합니다. 
+  두 경우 모두 로깅 목적으로 앱 수준의 "error"가 발생합니다.

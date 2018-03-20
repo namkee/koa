@@ -7,12 +7,16 @@
   [![OpenCollective Backers][backers-image]](#backers)
   [![OpenCollective Sponsors][sponsors-image]](#sponsors)
 
-  Expressive HTTP middleware framework for node.js to make web applications and APIs more enjoyable to write. Koa's middleware stack flows in a stack-like manner, allowing you to perform actions downstream then filter and manipulate the response upstream.
+## Introduction
 
-  Only methods that are common to nearly all HTTP servers are integrated directly into Koa's small ~570 SLOC codebase. This
-  includes things like content negotiation, normalization of node inconsistencies, redirection, and a few others.
+  Koa는 웹 애플리케이션 및 API를 위한 작고 표현력이 뛰어나며 견고한 기반을 목표로하는 Express 팀의 새로운 웹 프레임 워크입니다. 
+  generator의 활용을 통해 Koa는 콜백을 제거하고 오류 처리를 크게 향상시켜 제공합니다. 
+  Koa는 core 안에 어떤 미들웨어도 번들로 제공하지 않으며, 그래서 서버를 좀더 빠르고 재미있게 작성할 수 있는 우아한 일련의 메소드를 제공합니다.
 
-  Koa is not bundled with any middleware.
+  거의 모든 HTTP 서버들에서 공통적인 메소드들만 Koa와( ~570 SLOC) 직접 통합됩니다.
+  공통적인 메소드들에는 내용 협상, 노드 불일치의 표준화, 리디렉션 및 몇 가지 다른 것들이 포함됩니다.
+
+  Koa는 어떠한 미들웨어도 번들링 하지 않습니다.
 
 ## Installation
 
@@ -44,11 +48,10 @@ app.listen(3000);
 
 
 ## Middleware
+Koa는 미들웨어로써 같은 두 가지 다른 종류의 기능을 수행 할 수있는 미들웨어 프레임 워크입니다.
 
-Koa is a middleware framework that can take two different kinds of functions as middleware:
-
-  * async function
-  * common function
+  * 비동기 function
+  * 일반적인 function
 
 Here is an example of logger middleware with each of the different functions:
 
@@ -80,9 +83,9 @@ app.use((ctx, next) => {
 
 ### Koa v1.x Middleware Signature
 
-The middleware signature changed between v1.x and v2.x.  The older signature is deprecated.
+미들웨어 형상이 v1.x와 v2.x간에 변경되었습니다. 이전 형상은 더 이상 사용되지 않습니다.
 
-**Old signature middleware support will be removed in v3**
+**이전 형상의 미들웨어 사용 지원은 v3에서 제거됩니다.**
 
 Please see the [Migration Guide](docs/migration.md) for more information on upgrading from v1.x and
 using v1.x middleware with v2.x.

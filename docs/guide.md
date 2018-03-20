@@ -1,15 +1,15 @@
 
 # Guide
 
-  This guide covers Koa topics that are not directly API related, such as best practices for writing middleware and application structure suggestions. In these examples we use async functions as middleware - you can also use commonFunction or generatorFunction which will be a little different.
+  이 가이드는 미들웨어 작성 및 응용 프로그램 구조 제안과 같은 모범 사례 등 API와 직접적인 관련이없는 Koa 의 항목들을 다룹니다. 
+  예제들 에서는 비동기 함수를 미들웨어로 사용합니다. commonFunction 또는 generatorFunction을 사용하는 것과는 약간 다를 수 있습니다.
 
 ## Writing Middleware
 
-  Koa middleware are simple functions which return a `MiddlewareFunction` with signature (ctx, next). When
-  the middleware is run, it must manually invoke `next()` to run the "downstream" middleware.
+  Koa 미들웨어는 파라미터(ctx, next)를 가진 `MiddlewareFunction` 을 반환하는 간단한 function 입니다. 
+  미들웨어가 실행되면 `next()` 를 호출하는 코드를 작성해서 이어서 실행되어야할 "downstream" 미들웨어를 실행하도록 해야합니다.
 
-  For example if you wanted to track how long it takes for a request to propagate through Koa by adding an
-  `X-Response-Time` header field the middleware would look like the following:
+  예를 들어 `X-Response-Time` 헤더 필드를 추가하여 요청이 Koa를 통해 전파되는 데 걸리는 시간을 추적하려는 경우 미들웨어는 다음과 같이 구현 할수 있습니다.
 
 ```js
 async function responseTime(ctx, next) {
@@ -22,39 +22,36 @@ async function responseTime(ctx, next) {
 app.use(responseTime);
 ```
 
-  If you're a front-end developer you can think any code before `next();` as the "capture" phase,
-  while any code after is the "bubble" phase. This crude gif illustrates how async function allow us
-  to properly utilize stack flow to implement request and response flows:
+  만일 프론트 엔드 개발자라면 `next();` 앞부분 에는 "capture" 단계로서 올수 있는 코드를 생각할 수 있습니다. 반면에 뒷부분에는 "bubble" 단계 코드 있을 수 있습니다.
+  밑에 보이는 gif는 비동기 함수를 사용하여 스택 흐름을 적절하게 활용하여 request 및 response 흐름을 구현하는 방법을 보여줍니다.
 
 ![Koa middleware](/docs/middleware.gif)
 
-   1. Create a date to track response time
-   2. Await control to the next middleware
-   3. Create another date to track duration
-   4. Await control to the next middleware
-   5. Set the response body to "Hello World"
-   6. Calculate duration time
-   7. Output log line
-   8. Calculate response time
-   9. Set `X-Response-Time` header field
-   10. Hand off to Koa to handle the response
+   1. 응답 시간을 추적할 Date 객체 생성
+   2. 다음 미들웨어의 종료까지 대기하도록 Await
+   3. 또다른 시간을 추적하기 위해 Date 객체 생성
+   4. 다음 미들웨어의 종료까지 대기하도록 Await
+   5. 응답 body 에 "Hello World" 문자열을 세팅 
+   6. 구간 시간값 계산
+   7. 콘솔 로그 출력
+   8. 응답 시간 계산
+   9. `X-Response-Time` 헤더 필드에 값 세팅
+   10. 응답을 처리를 Koa 로 넘김
 
- Next we'll look at the best practices for creating Koa middleware.
+ 다음은 Koa 미들웨어를 생성하는 최적의 예제를 보겠습니다.
 
 ## Middleware Best Practices
 
-  This section covers middleware authoring best practices, such as middleware
-  accepting options, named middleware for debugging, among others.
+  이 섹션에서는 미들웨어 옵션 값 확인, 디버깅을 위한 미들웨어 이름붙이기 등과 같은 미들웨어 제작 모범 사례에 대해 다룹니다.
 
 ### Middleware options
 
-  When creating public middleware it's useful to conform to the convention of
-  wrapping the middleware in a function that accepts options, allowing users to
-  extend functionality. Even if your middleware accepts _no_ options, this is still
-  a good idea to keep things uniform.
 
-  Here our contrived `logger` middleware accepts a `format` string for customization,
-  and returns the middleware itself:
+  공개될 미들웨어를 만들 때는 사용자가 기능을 확장을 용이하게 할 수 있도록
+  미들웨어를 옵션을 사용하는 함수로 래핑해서 작성하는 컨벤션을 지키는것이 유용합니다. 
+  개발하려는 미들웨어에서 옵션을 사용하지 않더라도, 이는 여전히 일관성을 유지하는 좋은 아이디어입니다.
+
+  여기에서 고안된 `logger` 미들웨어는 커스터마이징을 위한 `format` 문자열을 파라미터로 받고 미들웨어 자체를 반환합니다.
 
 ```js
 function logger(format) {
@@ -77,7 +74,7 @@ app.use(logger(':method :url'));
 
 ### Named middleware
 
-  Naming middleware is optional, however it's useful for debugging purposes to assign a name.
+  미들웨어에 이름을 지정하는 것은 선택 사항이지만 디버깅 하는데 유용합니다.
 
 ```js
 function logger(format) {
@@ -89,7 +86,7 @@ function logger(format) {
 
 ### Combining multiple middleware with koa-compose
 
-  Sometimes you want to "compose" multiple middleware into a single middleware for easy re-use or exporting. You can use [koa-compose](https://github.com/koajs/compose)
+  때로는 여러 미들웨어를 "구성"해서 하나의 미들웨어로 쉽게 재사용하거나 내보낼 수 있습니다. [koa-compose](https://github.com/koajs/compose) 를 사용할 수 있습니다.
 
 ```js
 const compose = require('koa-compose');
@@ -127,10 +124,9 @@ app.use(all);
 
 ### Response Middleware
 
-  Middleware that decide to respond to a request and wish to bypass downstream middleware may
-  simply omit `next()`. Typically this will be in routing middleware, but this can be performed by
-  any. For example the following will respond with "two", however all three are executed, giving the
-  downstream "three" middleware a chance to manipulate the response.
+  미들웨어가 request 에 응답하기로 결정하거나, 이어지는 다운스트림 미들웨어를 그냥 통과 시키려 한다면 `next()` 를 생략하면 됩니다. 
+  일반적으로 이것은 라우팅 미들웨어에 있지만 이것은 어느곳이든 처리 할 수 있습니다. 
+  예를 들어 다음은 "two" 로 응답하기는 하지만, 세 가지 미들웨어가 모두가 실행되기 때문에 마지막 "three" 미들웨어에서 응답을 변경 할 수 있는 기회가 제공됩니다.
 
 ```js
 app.use(async function (ctx, next) {
@@ -155,6 +151,7 @@ app.use(async function (ctx, next) {
 
   The following configuration omits `next()` in the second middleware, and will still respond
   with "two", however the third (and any other downstream middleware) will be ignored:
+  아래와 같은 경우에는 두 번째 미들웨어에서 `next()` 를 생략하여, 응답은 똑같이 "two" 이지만, 세 번째 (및 다른 다운 스트림 미들웨어)는 실행 되지 않습니다.
 
 ```js
 app.use(async function (ctx, next) {
@@ -176,15 +173,13 @@ app.use(async function (ctx, next) {
 });
 ```
 
-  When the furthest downstream middleware executes `next();`, it's really yielding to a noop
-  function, allowing the middleware to compose correctly anywhere in the stack.
+  가장 마지막 미들웨어가 `next();` 를 실행하면, 그때는 바로 noop 함수로 돌아갑니다. 그렇기 때문에 미들웨어는 스택안에 어느 위치에 있더라도 문제없이 동작하게 됩니다.
 
 ## Async operations
 
-  Async function and promise forms Koa's foundation, allowing
-  you to write non-blocking sequential code. For example this middleware reads the filenames from `./docs`,
-  and then reads the contents of each markdown file in parallel before assigning the body to the joint result.
-
+  Async 함수와 Promise 형식은 Koa의 기반을 형성하여 non-blocking sequential 코드를 작성할 수 있습니다. 
+  예를 들어 아래 미들웨어는 `./docs` 에서 파일 이름을 읽은 다음, 
+  응답 body 에 결과를 세팅하기 전에 병렬로 각 마크 다운 파일의 내용을 읽습니다.
 
 ```js
 const fs = require('fs-promise');
@@ -200,10 +195,9 @@ app.use(async function (ctx, next) {
 
 ## Debugging Koa
 
-  Koa along with many of the libraries it's built with support the __DEBUG__ environment variable from [debug](https://github.com/visionmedia/debug) which provides simple conditional logging.
+  Koa와 함께 구축 된 많은 라이브러리는 간단한 조건부 로깅을 제공하는 [debug](https://github.com/visionmedia/debug) 환경 변수 __DEBUG__ 를 지원합니다.
 
-  For example
-  to see all Koa-specific debugging information just pass `DEBUG=koa*` and upon boot you'll see the list of middleware used, among other things.
+  예를 들어 모든 Koa로 특정하는 디버깅 정보를 보려면 `DEBUG=koa*` 를 입력하고 부팅 하면, 사용되는 미들웨어 목록을 볼 수 있습니다.
 
 ```
 $ DEBUG=koa* node --harmony examples/simple
@@ -214,11 +208,8 @@ $ DEBUG=koa* node --harmony examples/simple
   koa:application use response +0ms
   koa:application listen +0ms
 ```
-
-  Since JavaScript does not allow defining function names at
-  runtime, you can also set a middleware's name as `._name`.
-  This is useful when you don't have control of a middleware's name.
-  For example:
+  JavaScript는 런타임에 function의 이름을 정의 할 수 없지만, 미들웨어는 런타임에 이름을 `._name`로 설정할 수도 있습니다. 
+  이것은 미들웨어 이름을 제어 할 수없는 경우에 유용합니다. 
 
 ```js
 const path = require('path');

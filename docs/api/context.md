@@ -1,15 +1,9 @@
 # Context
 
-  A Koa Context encapsulates node's `request` and `response` objects
-  into a single object which provides many helpful methods for writing
-  web applications and APIs.
-  These operations are used so frequently in HTTP server development
-  that they are added at this level instead of a higher level framework,
-  which would force middleware to re-implement this common functionality.
+  Koa Context는 노드의 `request` 및 `response` 객체를 단일 객체로 캡슐화하여 웹 응용 프로그램 및 API를 작성하는 데 유용한 방법을 제공합니다. 
+  상위 단계의 프레임워크 대신에 이 단계에 추가하게 되는 작업은 HTTP 서버 개발을 하다보면 아주 빈번하게 일어나는 일입니다. 그러다보니 미들웨어에서 공통의 기능들을 자꾸 재구현하는 일들이 발생하죠.
 
-  A `Context` is created _per_ request, and is referenced in middleware
-  as the receiver, or the `ctx` identifier, as shown in the following
-  snippet:
+  `Context`는 요청 당 하나씩 만들어지며, 미들웨어에서 수신자로써 참조되거나, `ctx` 라는 식별자로 참조됩니다. 다음의 코드를 확인하세요.
 
 ```js
 app.use(async ctx => {
@@ -18,14 +12,12 @@ app.use(async ctx => {
   ctx.response; // is a Koa Response
 });
 ```
-
-  Many of the context's accessors and methods simply delegate to their `ctx.request` or `ctx.response`
-  equivalents for convenience, and are otherwise identical. For example `ctx.type` and `ctx.length`
-  delegate to the `response` object, and `ctx.path` and `ctx.method` delegate to the `request`.
+  Context의 접근자 및 메서드 중 많은 부분이 편의상 간단하게 `ctx.request` 또는 `ctx.response` 로 위임합니다. 그리고 그외의 다른 것들은 동일합니다. 
+  예를 들어 `ctx.type`과 `ctx.length`는 `response` 객체를 위임하고 `ctx.path`와 `ctx.method`는 `request` 객체를 위임합니다.
 
 ## API
 
-  `Context` specific methods and accessors.
+  `Context` 의 메소드와 접근자
 
 ### ctx.req
 
@@ -35,7 +27,7 @@ app.use(async ctx => {
 
   Node's `response` object.
 
-  Bypassing Koa's response handling is __not supported__. Avoid using the following node properties:
+  Koa가 수행하는 응답 처리를 우회하는 것은 지원되지 않습니다. 다음 node.js 속성을 사용하지 마십시오.
 
 - `res.statusCode`
 - `res.writeHead()`
@@ -51,8 +43,7 @@ app.use(async ctx => {
   A Koa `Response` object.
 
 ### ctx.state
-
-  The recommended namespace for passing information through middleware and to your frontend views.
+  다른 미들웨어나 view 레이어에 정보를 전달하기 위해 권장되는 네임스페이스입니다.
 
 ```js
 ctx.state.user = await User.find(id);
@@ -60,11 +51,11 @@ ctx.state.user = await User.find(id);
 
 ### ctx.app
 
-  Application instance reference.
+  애플리케이션 인스턴스의 레퍼런스.
 
 ### ctx.cookies.get(name, [options])
 
-  Get cookie `name` with `options`:
+  쿠키에서 `name` 에 해당하는 값을 `options` 를 활용해 가져온다.
 
  - `signed` the cookie requested should be signed
 
@@ -86,10 +77,9 @@ Koa uses the [cookies](https://github.com/jed/cookies) module where options are 
 Koa uses the [cookies](https://github.com/jed/cookies) module where options are simply passed.
 
 ### ctx.throw([status], [msg], [properties])
-
-  Helper method to throw an error with a `.status` property
-  defaulting to `500` that will allow Koa to respond appropriately.
-  The following combinations are allowed:
+  
+  에러 발생 상황에서 Koa가 적절하게 응답 할 수 있게 해주는 헬퍼 메서드 입니다. `.status` 에 값을 지정할수 있으며 기본값은 `500`입니다.
+  다음 조합으로 사용 할 수 있습니다.
 
 ```js
 ctx.throw(400);
@@ -97,7 +87,7 @@ ctx.throw(400, 'name required');
 ctx.throw(400, 'name required', { user: user });
 ```
 
-  For example `ctx.throw(400, 'name required')` is equivalent to:
+  예를들어 `ctx.throw(400, 'name required')` 는 다음의 코드를 실행한 것과 동일합니다.
 
 ```js
 const err = new Error('name required');
@@ -105,38 +95,38 @@ err.status = 400;
 err.expose = true;
 throw err;
 ```
+  이는 사용자 수준의 오류이며 `err.expose`라는 플래그값으로 메시지가 클라이언트 응답으로 전달되는 것을 허용할지 여부를 지정합니다. 
+  일반적으로 오류 세부 사항을 유출하지 않기 때문에 오류 메시지의 경우는 일반적으로 `true`로 지정하지 않습니다.
 
-  Note that these are user-level errors and are flagged with
-  `err.expose` meaning the messages are appropriate for
-  client responses, which is typically not the case for
-  error messages since you do not want to leak failure
-  details.
+  `properties` 객체를 전달하게 되면 `error` 에 병합되어, 호출자에 보고될수 있습니다. 
+  에러에 대한 처리를 좀더 자동화 하는데 유용하게 쓰일수 있습니다.
 
-  You may optionally pass a `properties` object which is merged into the error as-is, useful for decorating machine-friendly errors which are reported to the requester upstream.
 
 ```js
 ctx.throw(401, 'access_denied', { user: user });
 ```
 
-Koa uses [http-errors](https://github.com/jshttp/http-errors) to create errors.
+Koa는 error 를 생성하는데 [http-errors](https://github.com/jshttp/http-errors) 를 사용합니다.
 
 ### ctx.assert(value, [status], [msg], [properties])
 
-  Helper method to throw an error similar to `.throw()`
-  when `!value`. Similar to node's [assert()](http://nodejs.org/api/assert.html)
-  method.
+  `.throw()` 와 유사하게 에러를 던지는 헬퍼 메소드 입니다. 전달되는 value 의 `!value` 연산 결과가 true 인경우 에러를 던집니다.
+  nodejs 의 [assert()](http://nodejs.org/api/assert.html) 메소드와 유사합니다. 
 
 ```js
 ctx.assert(ctx.state.user, 401, 'User not found. Please login!');
 ```
 
-Koa uses [http-assert](https://github.com/jshttp/http-assert) for assertions.
+Koa 는 assertions 으로 [http-assert](https://github.com/jshttp/http-assert) 를 사용합니다.
 
 ### ctx.respond
 
-  To bypass Koa's built-in response handling, you may explicitly set `ctx.respond = false;`. Use this if you want to write to the raw `res` object instead of letting Koa handle the response for you.
+  Koa의 기본 응답 처리를 우회하려면 `ctx.respond = false;`를 명시적으로 설정할 수 있습니다. 
+  Koa가 응답을 처리하는 대신 원시 nodejs의 `res` 객체에 사용하고 싶을 때 이것을 사용하십시오.
 
-  Note that using this is __not__ supported by Koa. This may break intended functionality of Koa middleware and Koa itself. Using this property is considered a hack and is only a convenience to those wishing to use traditional `fn(req, res)` functions and middleware within Koa.
+  이것을 사용하는 것은 Koa에서 지원되지 않습니다. 
+  이것은 Koa 미들웨어 및 Koa 자체의 의도 된 기능을 손상시킬 수 있습니다. 
+  이 속성을 사용하는 것은 해킹으로 간주되며 Koa 내에서 기존에 사용하던 `fn(req, res)` 함수 및 미들웨어를 사용하려는 사람들에게 편의를 제공합니다.
 
 ## Request aliases
 
