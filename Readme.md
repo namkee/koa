@@ -92,20 +92,20 @@ using v1.x middleware with v2.x.
 
 ## Context, Request and Response
 
-Each middleware receives a Koa `Context` object that encapsulates an incoming
-http message and the corresponding response to that message.  `ctx` is often used
-as the parameter name for the context object.
+각 미들웨어는 http 메시지와 해당 메시지에 대한 응답을 캡슐화하는 Koa `Context` 객체를 수신합니다. `ctx` 는 종종 Context 갹체의 매개 변수 이름으로 사용됩니다.
 
 ```js
 app.use(async (ctx, next) => { await next(); });
 ```
 
-Koa provides a `Request` object as the `request` property of the `Context`.  
-Koa's `Request` object provides helpful methods for working with
-http requests which delegate to an [IncomingMessage](https://nodejs.org/api/http.html#http_class_http_incomingmessage)
-from the node `http` module.
+ 
 
-Here is an example of checking that a requesting client supports xml.
+
+Koa는 `Context`의 `request` 속성으로 `Request` 객체를 제공합니다.
+Koa의 `Request` 객체는 nodejs의 `http` 모듈로부터 [IncomingMessage](https://nodejs.org/api/http.html#http_class_http_incomingmessage) 에 위임한 
+http request를 처리하는 데 유용한 메소드를 제공합니다.
+
+다음은 요청 클라이언트가 xml을 지원하는지 확인하는 예제입니다.
 
 ```js
 app.use(async (ctx, next) => {
@@ -116,18 +116,16 @@ app.use(async (ctx, next) => {
 });
 ```
 
-Koa provides a `Response` object as the `response` property of the `Context`.  
-Koa's `Response` object provides helpful methods for working with
-http responses which delegate to a [ServerResponse](https://nodejs.org/api/http.html#http_class_http_serverresponse)
-.  
+Koa는 `Context`의 `response` 속성으로 `Response` 객체를 제공합니다.
+Koa의 `Response` 객체는 [ServerResponse](https://nodejs.org/api/http.html#http_class_http_serverresponse) 에 위임한 
+http response를 처리하는 데 유용한 메소드를 제공합니다.
 
-Koa's pattern of delegating to Node's request and response objects rather than extending them
-provides a cleaner interface and reduces conflicts between different middleware and with Node
-itself as well as providing better support for stream handling.  The `IncomingMessage` can still be
-directly accessed as the `req` property on the `Context` and `ServerResponse` can be directly
-accessed as the `res` property on the `Context`.
+Koa가 nodejs 의 요청 및 응답 객체를 확장하는 대신 위임하는 패턴은 보다 깨끗한 인터페이스를 제공하고 
+다른 미들웨어와 nodejs 자체 간의 충돌을 줄이면서 스트림 처리를보다 잘 지원합니다. 
 
-Here is an example using Koa's `Response` object to stream a file as the response body.
+`IncomingMessage` 는 `Context`의 `req` 속성으로 직접 접근 할수  있으며, `ServerResponse` 또한 `Context`의 `res` 속성으로의 직접 접근 할 수 있습니다.
+
+다음은 Koa의 `Response` 객체를 사용하여 파일을 응답 body로 스트리밍하는 예제입니다.
 
 ```js
 app.use(async (ctx, next) => {
@@ -137,22 +135,22 @@ app.use(async (ctx, next) => {
 });
 ```
 
-The `Context` object also provides shortcuts for methods on its `request` and `response`.  In the prior
-examples,  `ctx.type` can be used instead of `ctx.request.type` and `ctx.accepts` can be used
-instead of `ctx.request.accepts`.
+`Context` 객체는 `request` 및 `response` 에서 메서드에 대한 바로 가기도 제공합니다. 
 
-For more information on `Request`, `Response` and `Context`, see the [Request API Reference](docs/api/request.md),
-[Response API Reference](docs/api/response.md) and [Context API Reference](docs/api/context.md).
+위 코드 예제에서는 `ctx.request.type` 대신 `ctx.type` 을 사용할 수 있으며 `ctx.request.accepts` 대신 `ctx.accepts` 를 사용할 수 있습니다.
+
+`Request`,  `Response` 및 `Context`에 대한 자세한 내용은 [Request API Reference](docs/api/request.md),
+[Response API Reference](docs/api/response.md) 및 [Context API Reference](docs/api/context.md) 를 참조하십시오.
+
 
 ## Koa Application
 
-The object created when executing `new Koa()` is known as the Koa application object.
+`new Koa()` 를 실행할 때 생성 된 객체는 Koa 애플리케이션 객체로 알려져 있습니다.
 
-The application object is Koa's interface with node's http server and handles the registration
-of middleware, dispatching to the middleware from http, default error handling, as well as
-configuration of the context, request and response objects.
+애플리케이션 객체는 nodejs의 http 서버와의 Koa 인터페이스이며 미들웨어 등록, http에서 미들웨어로 전달, 기본 에러 핸들링, 
+컨텍스트, 요청, 응답 객체의 설정을 처리합니다.
 
-Learn more about the application object in the [Application API Reference](docs/api/index.md).
+Application Object Reference에 대한 자세한 내용은 [Application API Reference](docs/api/index.md). 를 참조하십시오.
 
 ## Documentation
 
